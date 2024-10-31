@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex items-center justify-center min-h-screen">
+        <form method="post" action="/registerProductDetails" class="bg-gray-800 p-8 rounded-xl shadow-lg space-y-6 w-full max-w-lg" id="productForm">
+            <h2 class="text-3xl font-bold text-center">Register Product Details</h2>
+              <!-- Manufacture ID (pre-filled) cookies fetch -->
+              <div class="space-y-1">
+                <label for="manufactureId" class="block text-sm font-medium">Manufacture ID:</label>
+                <input type="text" id="manufactureId" name="manufactureId" value="<%= data.local.userID %>" readonly
+                    class="w-full px-5 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            </div>
+            <!-- Manufacture name fetch from db (pre-filled) -->
+            <div class="space-y-1">
+                <label for="manufactureName" class="block text-sm font-medium">Manufacture Name:</label>
+                <input type="text" id="manufactureName" name="manufactureName" value="<%= data.local.manufactureName %>" readonly
+                    class="w-full px-5 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            </div>
+            
+            <div id="productEntries">
+                <!-- Product Entry Template -->
+                <div class="product-entry space-y-6 p-4  rounded-lg">
+                    
+                    <!-- consumer ID -->
+                    <div class="space-y-1">
+                        <input type="text" name="consumerId[]" placeholder="Consumer ID" required
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                    <!-- consumer Name -->
+                    <div class="space-y-1">
+                        <input type="text" name="consumerName[]" placeholder="Consumer Name" required
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                    <!-- Product Name -->
+                    <div class="space-y-1">
+                        <input type="text" name="productName[]" placeholder="Product Name" required
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                    <!-- Quantity -->
+                    <div class="space-y-1">
+                        <input type="number" name="quantity[]" placeholder="Quantity" required min="0"
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 quantity">
+                    </div>
+                    <!-- Price -->
+                    <div class="space-y-1">
+                        <input type="number" name="price[]" placeholder="Price" required min="0"
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 price">
+                    </div>
+                    
+                    <!-- Pincode -->
+                    <div class="space-y-1">
+                        <input type="text" name="pincode[]" placeholder="Pincode" required
+                            class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <input type="button" value="Add Another Product" id="addProduct" class="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer transition duration-300">
+            </div>
+
+            <div>
+                <input type="button" value="Calculate Total" id="calculateTotal" class="w-full px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 cursor-pointer transition duration-300">
+            </div>
+            <div>
+                <span class="text-lg font-semibold">Total: <span id="totalAmount">0</span></span>
+            </div>
+
+            <div>
+                <input type="submit" value="Register Products" class="w-full px-4 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 cursor-pointer transition duration-300">
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Function to calculate total price
+        function calculateTotal() {
+            const quantities = document.querySelectorAll('.quantity');
+            const prices = document.querySelectorAll('.price');
+            let totalAmount = 0;
+
+            quantities.forEach((quantity, index) => {
+                const qty = parseFloat(quantity.value) || 0;
+                const price = parseFloat(prices[index].value) || 0;
+                totalAmount += qty * price;
+            });
+
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        }
+
+        // Event listener for calculate total button
+        document.getElementById('calculateTotal').addEventListener('click', calculateTotal);
+
+        // Event listener for adding new product entries
+        document.getElementById('addProduct').addEventListener('click', function() {
+            const productEntries = document.getElementById('productEntries');
+            const newProductEntry = document.createElement('div');
+            newProductEntry.classList.add('product-entry', 'space-y-6', 'p-4' , 'rounded-lg');
+
+            newProductEntry.innerHTML = `
+               
+                <div class="space-y-1">
+                    <input type="text" name="productName[]" placeholder="Product Name" required
+                        class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+                <div class="space-y-1">
+                    <input type="number" name="quantity[]" placeholder="Quantity" required min="0"
+                        class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 quantity">
+                </div>
+                <div class="space-y-1">
+                    <input type="number" name="price[]" placeholder="Price" required min="0"
+                        class="w-full px-4 py-3 bg-gray-600 text-white border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 price">
+                </div>
+                
+            `;
+            productEntries.appendChild(newProductEntry);
+        });
+    </script>
+</body>
+</html>

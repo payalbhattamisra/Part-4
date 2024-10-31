@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h3>Product Details</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Manufacture ID:</strong> <%= productDetails.manufactureId %></li>
+                    <li class="list-group-item"><strong>Consumer ID:</strong> <%= productDetails.consumerId %></li>
+                    <li class="list-group-item"><strong>Product Name:</strong> <%= productDetails.productName %></li>
+                    <li class="list-group-item"><strong>Order Date:</strong> <%= productDetails.orderDate %></li>
+                    <li class="list-group-item"><strong>QR Code Image:</strong> <img src="<%= productDetails.qrCodeImage %>" alt="QR Code" width="200"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

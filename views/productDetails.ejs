@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Gradient Animation */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-bg {
+            background: linear-gradient(135deg, #4f46e5, #9333ea, #f59e0b, #ec4899);
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+        <h1 class="text-3xl font-bold text-gray-800 text-center mb-4">Product Details</h1>
+
+        <div class="mt-6 space-y-4">
+            <p><strong>Manufacture ID:</strong> <%= product.manufactureId %></p>
+            <p><strong>Manufacture Name:</strong> <%= product.manufactureName %></p>
+            <p><strong>Consumer ID:</strong> <%= product.consumerId %></p>
+            <p><strong>Consumer Name:</strong> <%= product.consumerName %></p>
+            <p><strong>Pincode:</strong> <%= product.pincode %></p>
+            <p><strong>Order Status:</strong> <%= product.order_status %></p>
+            <p><strong>Order Total:</strong> $<%= product.orderTotal %></p>
+
+            <h2 class="text-lg font-semibold mt-4">Product Names:</h2>
+            <ul class="list-disc list-inside space-y-2">
+                <% product.productName.forEach(item => { %>
+                    <li>
+                        <span class="text-gray-600"><strong>Name:</strong> <%= item.name %></span><br>
+                        <span class="text-gray-500"><strong>Quantity:</strong> <%= item.quantity %></span>, 
+                        <span class="text-gray-500"><strong>Price:</strong> $<%= item.price %></span>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+
+        <div class="flex justify-between mt-8">
+            <a href="" class="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>View QR Code</span>
+            </a>
+            <a href="https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=77208173350" class="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h3M5 10v6M9 16h3m-1-6v6m3 6h3m-1-6v6m4-12h3m-1 6h3" />
+                </svg>
+                <span>Track</span>
+            </a>
+        </div>
+
+        <a href="/" class="block mt-8 text-center bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+            Back to Profile
+        </a>
+    </div>
+</body>
+</html>

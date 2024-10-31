@@ -1,0 +1,21 @@
+{
+	"name": "@codedipper/random-code",
+	"version": "3.1.0",
+	"description": "Generates a random code.",
+	"type": "commonjs",
+	"module": "index.mjs",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://git.revvy.de/Revvy/random-code.git"
+	},
+	"keywords": [
+		"generator",
+		"code",
+		"id",
+		"random"
+	],
+	"author": "Revvy",
+	"license": "MIT"
+}

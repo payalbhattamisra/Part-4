@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .bounce {
+            animation: bounceIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .fade {
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-white">
+    <div class="text-center">
+        <div class="p-8 rounded-lg bg-green-100 text-green-900 shadow-lg">
+            <h1 class="text-5xl font-bold text-green-600 mb-4 bounce">Success!</h1>
+            <p class="text-lg fade">You have been successfully registered.</p>
+        </div>
+        <div class="mt-10 fade">
+            <a href="/loginPage" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300">
+                Go to LogIn
+            </a>
+        </div>
+    </div>
+</body>
+</html>

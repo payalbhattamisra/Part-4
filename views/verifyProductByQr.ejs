@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>Product Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Seller ID:</div>
+                    <div class="col-md-8"><%= product.manufactureId %></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Manufacturer ID:</div>
+                    <div class="col-md-8"><%= product.consumerId %></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Security Code:</div>
+                    <div class="col-md-8 text-danger"><%= product.SecurityCode %></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Product Name:</div>
+                    <div class="col-md-8"><%= product.productName %></div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Product Date:</div>
+                    <div class="col-md-8"><%= product.productDate %></div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/profile" class="btn btn-primary">Back to Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

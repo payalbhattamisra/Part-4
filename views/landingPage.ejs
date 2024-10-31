@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oxanium:wght@200..800&display=swap" rel="stylesheet">
+    <style>
+        /* Typing animation for the heading and paragraphs */
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* Apply typing effect without the cursor */
+        .typewriter h1 {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            animation: typing 2s steps(40, end) forwards;
+        }
+
+        .typewriter p:first-of-type {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            animation: typing 2s steps(50, end) forwards;
+            animation-delay: 2s; /* Delay for first paragraph to start after heading finishes */
+        }
+
+        .typewriter p:last-of-type {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            animation: typing 2s steps(30, end) forwards;
+            animation-delay: 4s; /* Delay for second paragraph to start after first paragraph finishes */
+        }
+
+        /* Text reveal animation for About & Features */
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 1s ease-in-out;
+        }
+
+        .fade-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold">MediLogix</a>
+            <ul class="flex space-x-6">
+                <li><a href="#" class="text-lg hover:text-blue-500">Home</a></li>
+                <li><a href="#about" class="text-lg hover:text-blue-500">About</a></li>
+                <li><a href="#features" class="text-lg hover:text-blue-500">Features</a></li>
+                <li><a href="#" class="text-lg hover:text-blue-500">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-blue-600 text-white py-20">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 items-center">
+            <!-- Left Description Section with Typing Animation -->
+            <div class="md:pr-12 text-center md:text-left typewriter">
+                <h1 class="text-5xl font-bold">Welcome to Our Service</h1>
+                <p class="mt-4 text-lg">Our app utilizes cutting-edge technology for superior drug package</p>
+                <p class="mt-4 text-lg">security and traceability.</p>
+                
+                <a href="#about" class="mt-8 inline-block bg-white text-blue-600 py-2 px-6 rounded-full font-bold hover:bg-gray-100">Learn More</a>
+                <a href="/rolePage" class="mt-8 inline-block bg-white text-blue-600 py-2 px-6 rounded-full font-bold hover:bg-gray-100">Register</a>
+                
+            </div>
+
+            <!-- Right Image Section -->
+            <div class="mt-8 md:mt-0">
+                <img src="/images/tuk-tuk_5811989.png" alt="Example Image" class="mx-auto w-small h-auto md:w-full">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="bg-white py-20">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 items-center">
+            <!-- Left Side Image -->
+            <div class="mt-8 md:mt-0">
+                <img src="/images/editor.png" alt="About Us Image" class="mx-auto w-96 h-auto md:w-full fade-in-left">
+            </div>
+
+            <!-- Right Side Text -->
+            <div class="md:pl-12 fade-in-left">
+                <h2 class="text-4xl font-bold">About Our Service</h2>
+                <p class="mt-4 text-lg font-sans">Our app uses personalized ,encrypted Data Matrix codes for superior drug package security and traceability. It features real-time tracking, automated complaint registration eradicates the defaulters of the chain . Advanced forecasting , Smart Alerts to prevent stockouts and overstocking . Insights  from regional to  locations specific institute levels along with multiple interactive dashboards enable effective consumption monitoring and decision-making. This system enhances drug distribution efficiency, transparency, and operational effectiveness.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="bg-gray-100 py-20">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-12 fade-in-left">Our Features</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/tracking.png" alt="Feature 1" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Real-Time Tracking</h3>
+                    <p class="mt-4 text-gray-600">Monitor your packages with real-time updates from shipment to delivery.</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/caution.png" alt="Feature 2" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Smart Alerts</h3>
+                    <p class="mt-4 text-gray-600">Receive alerts for near-expiry products and prioritize usage.</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/complain.png" alt="Feature 3" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Automated Complaints</h3>
+                    <p class="mt-4 text-gray-600">File complaints directly with the manufacturer by scanning the product code.</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/report.png" alt="Feature 1" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Real-Time Medicine Consumption</h3>
+                    <p class="mt-4 text-gray-600">Track medicine consumption trends in real-time by pincode and area.</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/kidney.png" alt="Feature 2" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Disease Prevalence by Area</h3>
+                    <p class="mt-4 text-gray-600">Identify which diseases are more prevalent in specific areas to enhance health services.</p>
+                </div>
+                <div class="bg-white p-6 shadow-md rounded-lg fade-in-left">
+                    <img src="/images/smart-robot.png" alt="Feature 3" class="w-16 h-16 mx-auto">
+                    <h3 class="text-xl font-semibold mt-6">Smart Suggestions for Best Manufacturers</h3>
+                    <p class="mt-4 text-gray-600">Get recommendations for the best medicine manufacturers based on local data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 MediLogix. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scroll-triggered animation using Intersection Observer -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeInElements = document.querySelectorAll('.fade-in-left');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);  // Stop observing once animation is applied
+                    }
+                });
+            }, {
+                threshold: 0.1  // Trigger when 10% of the element is visible
+            });
+
+            fadeInElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
