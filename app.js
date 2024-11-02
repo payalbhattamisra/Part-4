@@ -89,7 +89,7 @@ app.post("/createmanufacture", async (req, res) => {
         res.status(500).send("An error occurred during registration");
     }
 });
-
+ 
 app.post("/login", async (req, res) => {
     const {userID, email, password } = req.body;
 
@@ -172,6 +172,8 @@ app.get('/profile', isLoggedIn, async (req, res) => {
     }
 });
 
+
+
 app.get('/registerProductDetails', isLoggedIn, async(req, res) => {
     if (!req.user) {
         return res.redirect('/login'); // Ensure the user is logged in
@@ -200,60 +202,6 @@ app.get('/registerProductDetails', isLoggedIn, async(req, res) => {
         res.status(500).send('An error occurred while fetching user details.');
     }
 });
-
-// app.post('/registerProductDetails', async (req, res) => {
-//     const token = req.cookies.token;
-//     const data = jwt.verify(token, "shsh");
-//     req.user = data;
-
-//     console.log("Request Body:", req.body);
-
-//     const { manufactureId,manufactureName,consumerId, consumerName, productName, quantity, price, pincode } = req.body;
-
-//     try {
-//         // Ensure that the product names and corresponding quantities and prices are provided
-//         if (!productName || productName.length === 0) {
-//             console.log("Product Name is missing from the request");
-//             return res.status(400).send("Product Name is missing");
-//         }
-
-//         // Build the products array
-//         const products = productName.map((name, index) => ({
-//             name,
-//             quantity: Number(quantity[index]),
-//             price: Number(price[index]),
-//         }));
-
-//         console.log("Products Array:", products);
-
-//         // Calculate total order value
-//         const orderTotal = products.reduce((acc, product) => acc + (product.price * product.quantity), 0);
-
-//         console.log("Calculated Order Total:", orderTotal);
-
-//         // Create a new product entry
-//         const newProductDetails = await ProductModel.create({
-//             manufactureId,
-//             manufactureName,
-//             consumerId: consumerId[0], // Assuming a single manufacturer
-//             consumerName: consumerName[0], // Assuming a single manufacturer
-//             productName: products, // Now an array of product objects
-//             pincode: pincode[0], // Use first pincode
-//             SecurityCode: String(gen(4)), // Generate security code
-//             orderTotal // Use calculated total
-//         });
-
-//         // Optionally generate a QR code here
-//         // const qrCodeData = await qr.toDataURL(newProductDetails._id.toString());
-//         // newProductDetails.qrCodeImage = qrCodeData;
-//         // await newProductDetails.save();
-
-//         res.redirect("/profile");
-//     } catch (err) {
-//         console.error('Error registering product details:', err.message);
-//         res.status(500).send('An error occurred while registering the product details.');
-//     }
-// });
 
 app.post('/registerProductDetails', async (req, res) => {
     const token = req.cookies.token;
@@ -310,7 +258,10 @@ app.post('/registerProductDetails', async (req, res) => {
             throw new Error("Product ID is not defined after creation");
         }
 
-        const productUrl = `https://part-4-a6wt.onrender.com/productVerify/${newProductDetails._id}`;
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const productUrl = `${baseUrl}/productVerify/${newProductDetails._id}`;
+
+        //const productUrl = `https://sih-8aav.onrender.com/productVerify/${newProductDetails._id}`;
         console.log(`Product URL: ${productUrl}`);
 
         // Generate QR Code
@@ -353,11 +304,14 @@ app.get('/showQRCode', (req, res) => {
     const productId = req.query.productId;
 
     console.log(`Your product ID is ${productId}`);
-
-    res.render('displayQRCode', { qrCodeUrl, productId }); // Pass the product ID to the EJS template
+    
+    // Create the dynamic product link
+    const productLink = `${req.protocol}://${req.get('host')}/productVerify/${productId}`;
+    
+    res.render('displayQRCode', { qrCodeUrl, productId, productLink }); // Pass the product link to EJS template
 });
 
-// Route to display product details
+
 function isHaveToken(req, res, next) {
     const token = req.cookies.token;
     if (!token) {
@@ -394,14 +348,17 @@ app.get('/productVerify/:id', isHaveToken ,async (req, res) => {
         res.status(500).send('An error occurred while retrieving product details.');
     }
 });
- 
+
+
+
 app.get('/logout', (req, res) => {
 
     res.cookie("token" , "")
     res.redirect("/loginPage")
     
 });
-// Define your product details route
+
+
 app.get('/fullorderdetails/:id', async (req, res) => {
     try {
         const product = await ProductModel.findOne({ _id: req.params.id });
@@ -416,6 +373,7 @@ app.get('/fullorderdetails/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 app.post('/createconsumer', async (req, res) => {
     try {
         // Destructure data from the form submission
@@ -441,34 +399,53 @@ app.post('/createconsumer', async (req, res) => {
         }
     }
 });
+
+
+//     const { consumer_email , consumer_password } = req.body;
+
+//     try {
+//         let  emailCheck = await  Consumer.findOne({ consumer_email });
+         
+//         if (!emailCheck) {
+//             return res.send("Invalid  email");
+//         }
+//         const passwordMatch = await bcrypt.compare(consumer_password, emailCheck.consumer_password);
+//         if (!passwordMatch) {
+//             return res.status(400).send("Invalid password");
+//         }
+
+//         // Generate JWT token if credentials are valid
+//         let token = jwt.sign(
+//             { userID: emailCheck._id, hospital_name: emailCheck.hospital_name },
+//             "shsh", 
+//             { expiresIn: "1h" }
+//         );
+
+//         res.cookie("token", token, { httpOnly: true, secure: true });
+//         // res.send("Login successful");
+//         res.redirect("/profilelogin")
+//     } catch (error) {
+//         res.status(500).send("An error occurred during login process");
+//     }
+// });
+
 app.post("/loginconsumer", async (req, res) => {
-    const { consumer_email , consumer_password } = req.body;
+    const { consumer_email, consumer_password } = req.body;
 
     try {
-        let  emailCheck = await  Consumer.findOne({ consumer_email });
-         
-        if (!emailCheck) {
-            return res.send("Invalid  email");
-        }
-        const passwordMatch = await bcrypt.compare(consumer_password, emailCheck.consumer_password);
-        if (!passwordMatch) {
-            return res.status(400).send("Invalid password");
+        let consumer = await Consumer.findOne({ consumer_email });
+        if (!consumer || !await bcrypt.compare(consumer_password, consumer.consumer_password)) {
+            return res.send("Invalid Credentials");
         }
 
-        // Generate JWT token if credentials are valid
-        let token = jwt.sign(
-            { userID: emailCheck._id, hospital_name: emailCheck.hospital_name },
-            "shsh", 
-            { expiresIn: "1h" }
-        );
-
-        res.cookie("token", token, { httpOnly: true, secure: true });
-        // res.send("Login successful");
-        res.redirect("/profilelogin")
+        const token = jwt.sign({ userID: consumer._id, hospital_name: consumer.hospital_name }, "shsh", { expiresIn: "1h" });
+        res.cookie("token", token, { httpOnly: true, secure: false, sameSite: 'lax' });
+        res.redirect("/profilelogin");
     } catch (error) {
         res.status(500).send("An error occurred during login process");
     }
 });
+
 app.get('/profilelogin', isLoggedInconsumer, async (req, res) => {
     try {
         // Find products linked to this userID and hospital name
