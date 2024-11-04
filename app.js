@@ -336,11 +336,15 @@ app.get('/productVerify/:id', isHaveToken ,async (req, res) => {
         res.send("You Don't have a Proper Token Or Not using the Authorized Scanner")
 
     }
-
+    const providedSecurityCode = req.query.SecurityCode; 
     try {
         const product = await ProductModel.findById(req.params.id);
         if (!product) {
             return res.status(404).send('Product not found');
+        }
+        // Verify the security code
+        if (providedSecurityCode !== product.SecurityCode) {
+            return res.status(403).send('Invalid security code. Verification failed.');
         }
         res.render('verifyProductByQr', { product });
     } catch (err) {
