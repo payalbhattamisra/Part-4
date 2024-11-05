@@ -73,18 +73,19 @@
             <div id="reader" style="width: 300px; height: 300px;"></div>
         </div>
     </div>
-     <!-- Security Code Modal -->
-      <!-- QR Code Scanner Modal -->
-    <div id="scannerModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
+        <!-- Security Code Modal -->
+    <div id="securityCodeModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
-            <button onclick="closeScanner()" class="bg-red-500 text-white p-2 rounded-full mb-4">Close</button>
-            <div id="reader" style="width: 300px; height: 300px;"></div>
+            <button onclick="closeSecurityCodeModal()" class="bg-red-500 text-white p-2 rounded-full mb-4">Close</button>
+            <h3 class="text-lg font-semibold mb-4">Enter Security Code</h3>
+            <input type="text" id="securityCodeInput" class="border p-2 w-full mb-4" placeholder="Security Code">
+            <button onclick="verifyCode()" class="block w-full px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition duration-300">Verify</button>
         </div>
     </div>
 
     <script>
         let html5QrCode;
-        let productData; // Variable to hold the scanned product data
+        let productData;
 
         function openScanner() {
             document.getElementById('scannerModal').classList.remove('hidden');
@@ -92,24 +93,20 @@
 
             html5QrCode.start(
                 { facingMode: "environment" },
-                {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 }
-                },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
-                    // Attempt to parse the decoded text
                     try {
-                        productData = JSON.parse(decodedText); // Parse the QR code data
-                        if (productData && productData._id && productData.SecurityCode) {
-                            // Redirect to the security code verification page
-                            closeScanner(); // Close scanner modal
-                            window.location.href = `/verifyProductByQr?id=${productData._id}`;
+                        productData = JSON.parse(decodedText); 
+                        if (productData && productData._id) {
+                            document.getElementById('scannerModal').classList.add('hidden');
+                            document.getElementById('securityCodeModal').classList.remove('hidden');
                         } else {
-                            alert("Invalid product data in QR code.");
+                            alert("Invalid product data.");
                         }
                     } catch (error) {
                         alert("Failed to parse product data.");
                     }
+                    closeScanner();
                 },
                 (errorMessage) => {
                     console.log(`QR Code scanning error: ${errorMessage}`);
@@ -125,6 +122,30 @@
                 }).catch(err => {
                     console.error("Failed to stop the camera:", err);
                 });
+            }
+        }
+
+        function closeSecurityCodeModal() {
+            document.getElementById('securityCodeModal').classList.add('hidden');
+        }
+
+        function verifyCode() {
+            const enteredCode = document.getElementById('securityCodeInput').value;
+            if (productData && productData._id) {
+                const url = `/productVerify/${productData._id}?SecurityCode=${enteredCode}`;
+                fetch(url)
+                    .then(response => {
+                        if (response.ok) {
+                            // If the security code matches, redirect to the product verification page
+                            window.location.href = `/verifyProductByQr?productId=${productData._id}`;
+                        } else {
+                            alert("Invalid security code. Please try again.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error verifying code:", error);
+                        alert("An error occurred while verifying the code.");
+                    });
             }
         }
     </script>
