@@ -327,16 +327,12 @@ function isHaveToken(req, res, next) {
     }
 }
 
-app.get('/productVerify/:id', isHaveToken ,async (req, res) => {
-
-    console.log(req.user)
-    
-    if(!req.user){
-
-        res.send("You Don't have a Proper Token Or Not using the Authorized Scanner")
-
+app.get('/productVerify/:id', isHaveToken, async (req, res) => {
+    if (!req.user) {
+        return res.send("Unauthorized access: You don't have a proper token or are not using an authorized scanner.");
     }
-    const providedSecurityCode = req.query.SecurityCode; 
+
+    const providedSecurityCode = req.query.SecurityCode;
     try {
         const product = await ProductModel.findById(req.params.id);
         if (!product) {
@@ -346,6 +342,8 @@ app.get('/productVerify/:id', isHaveToken ,async (req, res) => {
         if (providedSecurityCode !== product.SecurityCode) {
             return res.status(403).send('Invalid security code. Verification failed.');
         }
+        
+        // Render the verification success page
         res.render('verifyProductByQr', { product });
     } catch (err) {
         console.error('Error fetching product details:', err.message);
