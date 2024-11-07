@@ -4,37 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product QR Code</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8fafc; /* Light gray background */
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
-            <h2 class="text-2xl font-bold text-blue-600 mb-4">Your Product QR Code</h2>
-            <p class="text-gray-700 mb-4">Scan this QR Code to view your order details:</p>
-            
-            <!-- QR Code Image -->
-            <div class="mb-4 p-4 border-2 border-blue-600 rounded-lg bg-gray-100">
-                <img src="<%= qrCodeUrl %>" alt="QR Code" class="w-full h-auto" />
-            </div>
+<body class="bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 min-h-screen flex items-center justify-center">
 
-            <!-- QR Code Link -->
-            <p class="text-gray-700 mb-4">Or click the link below:</p>
-            <a href="<%= productLink %>" target="_blank" class="text-blue-600 font-semibold hover:underline">
-                Product Link
+    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center space-y-8">
+        <h2 class="text-4xl font-extrabold text-blue-600">Product QR Code</h2>
+        <p class="text-lg text-gray-600">Scan this QR Code to view your order details:</p>
+
+        <!-- QR Code Image -->
+        <div class="p-8 bg-blue-50 rounded-lg shadow-lg">
+            <img src="<%= qrCodeUrl %>" alt="QR Code" class="w-72 h-72 mx-auto rounded-xl" />
+        </div>
+
+        <p class="text-lg text-gray-600">Or click the link below:</p>
+        <a href="<%= productLink %>" target="_blank" class="text-blue-600 font-semibold text-lg hover:underline transition-all duration-300">
+            View Product Details
+        </a>
+
+        <!-- Back to Profile Button -->
+        <div class="mt-8">
+            <a href="/profile" class="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300">
+                Back to Profile
             </a>
-            
-            <!-- Back to Profile Button -->
-            <div class="mt-6">
-                <a href="/profile" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                    Back to Profile
-                </a>
-            </div>
         </div>
     </div>
+
 </body>
 </html>

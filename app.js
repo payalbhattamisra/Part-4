@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
+//Render and vercel
+const bcrypt = require('bcryptjs');
+
 const jwt = require('jsonwebtoken');
 const userModel = require('./models/userD');
 const ProductModel = require('./models/productDetails')
@@ -11,11 +14,19 @@ var nodemailer = require('nodemailer');
 const app = express();
 const QRCode = require('qrcode'); 
 const Consumer=require('./models/consumer')
+
+const PORT = process.env.PORT || 3000;
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
+
+
 
 app.get("/login", (req, res) => {
     res.render('login');
@@ -89,7 +100,9 @@ app.post("/createmanufacture", async (req, res) => {
         res.status(500).send("An error occurred during registration");
     }
 });
- 
+
+
+
 app.post("/login", async (req, res) => {
     const {userID, email, password } = req.body;
 
@@ -119,9 +132,12 @@ app.post("/login", async (req, res) => {
     }
 });
 
+
+
 app.get("/success", (req, res) => {
     res.render('success');
 });
+
 app.get("/success_consumer", (req, res) => {
     res.render('success_consumer');
 });
@@ -141,6 +157,9 @@ function isLoggedIn(req, res, next) {
         return res.redirect("/loginPage"); 
     }
 }
+
+
+
 
 app.get('/profile', isLoggedIn, async (req, res) => {
     console.log(req.user); 
@@ -314,8 +333,9 @@ app.get('/showQRCode', (req, res) => {
 
 function isHaveToken(req, res, next) {
     const token = req.cookies.token;
+    
     if (!token) {
-        res.send("You Don't have a Proper Token Or Not using the Authorized Scanner")
+        return res.send("You Don't have a Proper Token Or Not using the Authorized Scanner");
     }
 
     try {
@@ -326,29 +346,23 @@ function isHaveToken(req, res, next) {
         return res.redirect("/profilelogin"); 
     }
 }
-app.get('/productVerify/:id', isHaveToken, async (req, res) => {
-    if (!req.user) {
-        return res.send("You don't have a proper token or are not using an authorized scanner");
-    }
 
-    const providedSecurityCode = req.query.SecurityCode;
+app.get('/productVerify/:id', isHaveToken ,async (req, res) => {
     try {
         const product = await ProductModel.findById(req.params.id);
         if (!product) {
             return res.status(404).send('Product not found');
         }
-
-        if (providedSecurityCode !== product.SecurityCode) {
-            return res.status(403).send('Invalid security code. Verification failed.');
-        }
-
-        // Render the verification page with the product details if the code matches
-        res.render('verifyProductByQr', { product });
+        
+        // If user is authenticated, render the product details page
+        res.render('AuthCode', { product });
+        
     } catch (err) {
         console.error('Error fetching product details:', err.message);
         res.status(500).send('An error occurred while retrieving product details.');
     }
 });
+
 
 
 
@@ -374,6 +388,81 @@ app.get('/fullorderdetails/:id', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+app.post("/submitAuthCode", async (req, res) => {
+    const securityCode = req.body.UsersecurityCode;
+    const productId = req.body.productId;
+    
+    try {
+        
+        const product = await ProductModel.findById(productId);
+
+        if (!product) {
+            return res.status(404).send("Product not found.");
+        }
+        
+    
+        if (product.SecurityCode === securityCode) {
+
+            res.render("verifyProductByQr" , {product})
+            
+        } else {
+            res.send("Invalid security code. Please try again.");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred while processing your request.");
+    }
+});
+
+app.get("/receive-order/:id", async (req, res) => {
+    try {
+        const TempProductid = req.params.id;
+        const tempProduct = await ProductModel.findById(TempProductid);
+        
+        if (!tempProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Render the page with product details
+        res.render('receiveOrder', { product: tempProduct });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.post("/receive-order/:id", async (req, res) => {
+    try {
+        const TempProductid = req.params.id;
+        const { receivedQuantity } = req.body;
+
+        const tempProduct = await ProductModel.findById(TempProductid);
+        
+        if (!tempProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Update the product's received quantity
+        tempProduct.receivedQuantity = receivedQuantity;
+
+        // Save the updated product document
+        await tempProduct.save();
+        
+        // Mark the order as delivered
+        tempProduct.order_status = "Delivered";
+        await tempProduct.save();
+
+        // Send a success response or redirect to another page
+        res.redirect(`/product-details/${tempProduct._id}`); // Redirect to the product details page after updating
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+
 
 app.post('/createconsumer', async (req, res) => {
     try {
@@ -498,6 +587,37 @@ function isLoggedInconsumer(req, res, next) {
     }
 }
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+
+
+// app.post("/AuthPage", async(req, res) => {
+
+//     const securityCode = req.body.securityCode;
+
+//     try{
+
+//         const temp = ProductModel.find({name:})
+
+
+//     }catch{
+
+
+//     }
+    
+    
+//     if (securityCode === 'expectedCode') {
+
+//         res.send("Security code verified successfully.");
+
+//     } else {
+
+//         res.send("Invalid security code. Please try again.");
+
+//     }
+
+// });
+
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

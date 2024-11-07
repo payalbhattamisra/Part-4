@@ -5,6 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 700px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1.75rem;
+            padding: 15px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .card-body .row {
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+        }
+
+        .card-body .row:last-child {
+            border-bottom: none;
+        }
+
+        .font-weight-bold {
+            color: #495057;
+            font-size: 1rem;
+        }
+
+        .text-danger {
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .product-item {
+            margin-bottom: 1rem;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary, .btn-success {
+            transition: background-color 0.3s ease;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .card-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 15px;
+            background-color: #fff;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .card-footer .btn {
+            margin-right: 10px;
+        }
+
+        .btn-wrapper {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -27,15 +110,24 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 font-weight-bold">Product Name:</div>
-                    <div class="col-md-8"><%= product.productName %></div>
+                    <div class="col-md-8">
+                        <% product.productName.forEach(item => { %>
+                            <div class="product-item">
+                                <strong>Name:</strong> <%= item.name %><br>
+                                <strong>Quantity:</strong> <%= item.quantity %><br>
+                                <strong>Price:</strong> $<%= item.price %>
+                            </div>
+                        <% }) %>
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4 font-weight-bold">Product Date:</div>
                     <div class="col-md-8"><%= product.productDate %></div>
                 </div>
             </div>
-            <div class="card-footer text-center">
+            <div class="card-footer text-center btn-wrapper">
                 <a href="/profile" class="btn btn-primary">Back to Profile</a>
+                <a href="/receive-order/<%= product.id%>" class="btn btn-success">Receive the Order</a>
             </div>
         </div>
     </div>

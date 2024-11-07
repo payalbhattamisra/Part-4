@@ -3,113 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        /* Keyframes for animated gradient */
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .profile-info {
+            animation: slideDown 0.3s ease-out;
         }
-        
-        /* Keyframes for floating text */
-        @keyframes floatText {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+                /* Color based on delivery status */
+                .status-delivered {
+            background-color: #d4edda; /* Light green */
         }
-
-        /* Keyframes for shadow pulsing */
-        @keyframes pulseShadow {
-            0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
-            50% { box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5); }
+        .status-cancelled {
+            background-color: #f8d7da; /* Light red */
         }
-
-        /* Animated header */
-         
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .status-processing {
+            background-color: #ffffff; /* White */
         }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        /* Dark blue header and sidebar */
+        .header, .sidebar {
+            background-color: #003366; /* Dark blue */
         }
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }
-            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.8); }
+        .sidebar a {
+            color: white;
         }
-        /* Animated text */
-        .animated-text {
-            animation: floatText 3s ease-in-out infinite;
-        }
-        .fade-in {
-            animation: fadeIn 1s ease-out;
-        }
-        .slide-in-right {
-            animation: slideInRight 1s ease-out;
-        }
-        .glow {
-            animation: glow 2s ease-in-out infinite;
+        .sidebar a:hover {
+            background-color: #004080;
         }
     </style>
 </head>
-<body class="bg-gray-100 pt-24 font-sans"> 
-    <!-- Animated Header -->
-    <header class="bg-gradient-to-r from-blue-500 to-purple-600  animated-header shadow-lg fixed w-full top-0 left-0 z-50">
-        <div class="container mx-auto flex justify-between items-center p-6">
-            <h1 class="text-3xl font-bold text-white animated-text">Profile Information</h1>
-        </div>
-        <div class="container mx-auto flex flex-col p-6 text-white">
-            <div class="flex space-x-4 mt-2">
-                <span class="font-semibold animated-text">Manufacture ID: <%= data.local.userID %></span>
-            </div>
-            <div class="flex space-x-4 mt-2">
-                <span class="font-semibold animated-text">Email: <%= data.local.email %></span>
+
+<body class="bg-gray-100 font-sans">
+    <!-- Header with Profile Button -->
+    <header class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 shadow-lg fixed w-full top-0 left-0 z-50 flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-white">MediLogix</h1>
+        
+        <!-- Profile Button -->
+        <div class="relative">
+            <button id="profileButton" class="rounded-full w-12 h-12 bg-white shadow-lg flex items-center justify-center focus:outline-none">
+                <!-- <img src="/path/to/profile-icon.png" alt="Profile" class="w-8 h-8 rounded-full"> -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                  </svg>
+                  
+            </button>
+
+            <!-- Profile Information Dropdown -->
+            <div id="profileInfo" class="profile-info absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-4 hidden">
+                <div class="flex space-x-4 mt-2">
+                    <span class="font-semibold">Manufacture ID: <%= data.local.userID %></span>
+                </div>
+                <div class="flex space-x-4 mt-2">
+                    <span class="font-semibold">Email: <%= data.local.email %></span>
+                </div>
             </div>
         </div>
     </header>
 
-   <!-- Main Content with padding to avoid overlap with sidebar -->
-   <div class="flex mt-24"> 
-    <main class="flex-1 p-6 pr-80 fade-in">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <% for (const product of data.products) { %>
-                <a href="/fullorderdetails/<%= product._id %>" class="block transform transition-transform duration-300 hover:scale-105">
-                    <div class="border rounded-xl shadow-lg p-6 bg-white hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:border-blue-300 hover:shadow-xl transition hover:shadow-2xl flex flex-col items-start glow">
-                        <div class="flex items-center mb-4">
-                            <span class="p-2 bg-blue-500 text-white rounded-full shadow-md mr-4">
-                                <!-- Icon (replace with SVG as needed) -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-3.866-3.582-7-8-7-1.191 0-2.3.305-3.263.83.211.209.263.517.142.785.278-.105.573-.201.88-.277A4.975 4.975 0 004 6c3.87 0 7 3.134 7 7h1zm6-6h6v6m-1-5v5h5m1 0a4.975 4.975 0 01-.883.277c-.376.092-.781.217-1.188.383-.603.241-1.13.553-1.597.926-.896.71-1.61 1.614-2.098 2.688C14.865 15.79 13.836 17.607 13 19H9c.836-1.393 1.865-3.21 3.26-4.608.735-.736 1.587-1.388 2.532-1.938.796-.46 1.612-.856 2.488-1.168A8.94 8.94 0 0121 12h1" />
-                                </svg>
-                            </span>
-                            <h3 class="text-xl font-semibold text-gray-700">Consumer ID: <%= product.consumerId %></h3>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-2">Order ID: <%= product._id %></p>
-                        <p class="text-gray-500 text-sm">Product Name: <%= product.productName.map(item => item.name).join(', ') %></p>
-                    </div>
-                </a>
-            <% } %>
+    <!-- Sidebar Navigation -->
+    <aside class="bg-gradient-to-b from-blue-500 to-purple-600 text-white w-64 h-screen py-14 px-4 fixed left-0 top-10 pt-24 flex flex-col justify-between">
+        <div>
+            <ul class="space-y-4">
+                <li><a href="#home" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                  </svg>
+                  Home
+                  </a></li>
+                </li>
+                <li><a href="#orders" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                  Orders
+                  </a></li>
+                <li><a href="#complaints" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+                  </svg>
+                  Complaints
+                  </a></li>
+                <li><a href="#analysis" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                  </svg>
+                  Analysis
+                  </a></li>
+                <!-- Add other sidebar links here -->
+            </ul>
         </div>
+        <div>
+            <a href="/logout" class="block px-4 py-3 rounded bg-red-500 hover:bg-red-600 text-center transition-all transform hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3m3-3 3 3-3 3" />
+                </svg>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 mt-24 p-6 flex-1">
+        <!-- Top right buttons -->
+        <div class="flex justify-end space-x-4 mb-6">
+            <button class="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                </svg>
+                Filter
+            </button>
+            <a href="/registerProductDetails"  class="flex items-center px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Register Product
+            </a>
+        </div>
+        
+
+        <!-- Orders Section (main content) -->
+        <section id="orders" class="p-6 bg-white rounded-lg shadow-lg fade-in">
+            <h2 class="text-2xl font-bold mb-4 flex justify-center">Orders</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <% for (const product of data.products) { %>
+                    <a href="/fullorderdetails/<%= product._id %>" class="block transform transition-transform duration-300 hover:scale-105">
+                        <div class="border rounded-xl shadow-lg p-6 bg-white hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:border-blue-300 hover:shadow-xl transition hover:shadow-2xl flex flex-col items-start <%= product.deliveryStatus === 'Delivered' ? 'status-delivered' : 
+                        product.deliveryStatus === 'Cancelled' ? 'status-cancelled' : 
+                        'status-processing' %>">
+                            <div class="flex items-center mb-4">
+                                <span class="p-2 bg-blue-500 text-white rounded-full shadow-md mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-3.866-3.582-7-8-7-1.191 0-2.3.305-3.263.83.211.209.263.517.142.785.278-.105.573-.201.88-.277A4.975 4.975 0 004 6c3.87 0 7 3.134 7 7h1zm6-6h6v6m-1-5v5h5m1 0a4.975 4.975 0 01-.883.277c-.376.092-.781.217-1.188.383-.603.241-1.13.553-1.597.926-.896.71-1.61 1.614-2.098 2.688C14.865 15.79 13.836 17.607 13 19H9c.836-1.393 1.865-3.21 3.26-4.608.735-.736 1.587-1.388 2.532-1.938.796-.46 1.612-.856 2.488-1.168A8.94 8.94 0 0121 12h1" />
+                                    </svg>
+                                </span>
+                                <h3 class="text-xl font-semibold text-gray-700">Consumer ID: <%= product.consumerId %></h3>
+                            </div>
+                            <p class="text-gray-500 text-sm mb-2">Order ID: <%= product._id %></p>
+                            <p class="text-gray-500 text-sm">Product Name: <%= product.productName.map(item => item.name).join(', ') %></p>
+                            <p class="text-gray-600 text-sm font-semibold">Delivery Status: <%= product.deliveryStatus %></p>
+                        </div>
+                    </a>
+                <% } %>
+            </div>
+        </section>
     </main>
 
-        <!-- Sidebar Navigation -->
-        <nav class="bg-gray-900 text-white w-64 h-screen py-6 px-4 fixed right-0 slide-in-right">
-            <ul class="space-y-6">
-                <li>
-                    <a href="/registerProductDetails" class="block px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 transition duration-300">
-                        Register Product
-                    </a>
-                </li>
-                <li>
-                    <a href="/logout" class="block px-4 py-2 rounded bg-red-500 hover:bg-red-600 transition duration-300">
-                        Logout
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <!-- Script to Toggle Profile Information -->
+    <script>
+        const profileButton = document.getElementById("profileButton");
+        const profileInfo = document.getElementById("profileInfo");
+
+        // Toggle profile info when clicking the button
+        profileButton.addEventListener("click", function (event) {
+            profileInfo.classList.toggle("hidden");
+            event.stopPropagation(); // Prevents the event from propagating to the document
+        });
+
+        // Hide profile info when clicking anywhere else on the document
+        document.addEventListener("click", function (event) {
+            if (!profileInfo.classList.contains("hidden") && event.target !== profileButton) {
+                profileInfo.classList.add("hidden");
+            }
+        });
+    </script>
 </body>
 </html>
