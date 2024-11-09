@@ -145,10 +145,22 @@
                                     <div class="form-row">
                                         <div class="form-column">
                                             <div class="form-group">
-                                                <!-- Label now includes product name -->
                                                 <label for="receivedQuantity_<%= item._id %>">Received Quantity for <%= item.name %>:</label>
-                                                <!-- Input box for received quantity -->
                                                 <input type="number" class="form-control received-input" id="receivedQuantity_<%= item._id %>" name="receivedQuantity_<%= item._id %>" min="0" max="<%= item.quantity %>" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-column">
+                                            <div class="form-group">
+                                                <label for="complainCategory_<%= item._id %>">Complain Category:</label>
+                                                <select class="form-control" id="complainCategory_<%= item._id %>" name="complainCategory_<%= item._id %>">
+                                                    <option value="" disabled selected>Select Reason</option>
+                                                    <option value="Short Shelf life">Short Shelf life</option>
+                                                    <option value="Damaged Goods">Damaged Goods</option>
+                                                    <option value="Incorrect Quantity">Incorrect Quantity</option>
+                                                    <option value="Expired Products">Expired Products</option>
+                                                    <option value="Quality Issues">Quality Issues</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -168,5 +180,27 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('form').addEventListener('submit', function(event) {
+                const inputs = document.querySelectorAll('.received-input');
+                let isValid = true;
+    
+                inputs.forEach(input => {
+                    const maxQuantity = parseInt(input.getAttribute('max'));
+                    const receivedQuantity = parseInt(input.value);
+                    
+                    if (receivedQuantity > maxQuantity) {
+                        alert(`Received quantity for ${input.id} cannot exceed ${maxQuantity}`);
+                        isValid = false;
+                    }
+                });
+    
+                if (!isValid) {
+                    event.preventDefault(); // Stop form submission if any input is invalid
+                }
+            });
+        });
+    </script>
 </body>
 </html>

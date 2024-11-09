@@ -14,7 +14,7 @@ var nodemailer = require('nodemailer');
 const app = express();
 const QRCode = require('qrcode'); 
 const Consumer=require('./models/consumer')
-
+const Complain = require('./models/complain'); 
 const PORT = process.env.PORT || 3000;
 
 app.set('views', path.join(__dirname, 'views'));
@@ -330,6 +330,7 @@ app.get('/showQRCode', (req, res) => {
     res.render('displayQRCode', { qrCodeUrl, productId, productLink }); // Pass the product link to EJS template
 });
 
+ 
 
 function isHaveToken(req, res, next) {
     const token = req.cookies.token;
@@ -417,52 +418,63 @@ app.post("/submitAuthCode", async (req, res) => {
 
 app.get("/receive-order/:id", async (req, res) => {
     try {
-        const TempProductid = req.params.id;
-        const tempProduct = await ProductModel.findById(TempProductid);
-        
-        if (!tempProduct) {
+        const productId = req.params.id;
+        const product = await ProductModel.findOne({ _id: productId });
+
+        if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        // Render the page with product details
-        res.render('receiveOrder', { product: tempProduct });
+        // Fetch the manufactureId and consumerId for the product
+        const complainData = {
+            manufactureId: product.manufactureId,  // Assuming the product has a 'manufactureId' field
+            consumerId: product.consumerId,  // Assuming the product has a 'consumerId' field
+            order_id: product._id,
+            product_complain: []
+        };
+
+        res.render('receiveOrder', { product, complainData });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+        console.error("Error:", error);
+        if (error.name === 'MongoTimeoutError') {
+            return res.status(503).json({ message: "Database query timeout, please try again later" });
+        }
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 });
-
-app.post("/receive-order/:id", async (req, res) => {
+app.post('/receive-order/:id', async (req, res) => {
     try {
-        const TempProductid = req.params.id;
-        const { receivedQuantity } = req.body;
+        const productId = req.params.id;
+        const product = await ProductModel.findById(productId);
 
-        const tempProduct = await ProductModel.findById(TempProductid);
-        
-        if (!tempProduct) {
+        if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        // Update the product's received quantity
-        tempProduct.receivedQuantity = receivedQuantity;
+        const complainData = {
+            manufactureId: product.manufactureId,
+            consumerId: product.consumerId,
+            order_id: product._id,
+            product_complain: product.productName.map(item => ({
+                productName: item.name,  // Store the product name directly
+                send_quantity: item.quantity,
+                receive_quantity: req.body[`receivedQuantity_${item._id}`] || item.quantity,
+                complain_category: req.body[`complainCategory_${item._id}`] || "Damaged Goods"
+            }))
+        };
 
-        // Save the updated product document
-        await tempProduct.save();
-        
-        // Mark the order as delivered
-        tempProduct.order_status = "Delivered";
-        await tempProduct.save();
+        const newComplain = new Complain(complainData);
+        await newComplain.save();
 
-        // Send a success response or redirect to another page
-        res.redirect(`/product-details/${tempProduct._id}`); // Redirect to the product details page after updating
+        res.status(201).json({ message: "Complaint registered successfully", complain: newComplain });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+        console.error("Error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 });
 
-
-
+ 
 
 app.post('/createconsumer', async (req, res) => {
     try {
