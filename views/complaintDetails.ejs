@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Complaint Document</title>
+    <style>
+        /* Reset some basic styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f4f6f9, #e9ecf3);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            padding: 30px 40px;
+            margin-top: 20px;
+            border-top: 6px solid #4a90e2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #4a90e2;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .complaint-details, .product-complaints {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9fc;
+        }
+
+        .complaint-details p {
+            margin: 10px 0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .complaint-details p strong {
+            color: #444;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #4a90e2;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 15px;
+            background-color: #fff;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        li hr {
+            margin: 12px 0;
+            border: 0.5px solid #eee;
+        }
+
+        .product-details {
+            margin: 8px 0;
+            line-height: 1.5;
+            font-size: 1.1rem;
+        }
+
+        .product-details strong {
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 40px;
+        }
+
+        /* Icons */
+        .icon {
+            color: #4a90e2;
+            margin-right: 6px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Complaint Document</h1>
+            <p>Review of complaint details and product issues</p>
+        </div>
+
+        <div class="complaint-details">
+            <p><span class="icon">📇</span><strong>Manufacture ID:</strong> <%= complain.manufactureId %></p>
+            <p><span class="icon">👤</span><strong>Consumer ID:</strong> <%= complain.consumerId %></p>
+            <p><span class="icon">📦</span><strong>Order ID:</strong> <%= complain.order_id %></p>
+            <p><span class="icon">🔖</span><strong>Status:</strong> <%= complain.complain_status %></p>
+            <p><span class="icon">📅</span><strong>Date:</strong> <%= new Date(complain.complain_date).toLocaleDateString() %></p>
+        </div>
+
+        <div class="product-complaints">
+            <h2 class="section-title">Product Complaints</h2>
+            <ul>
+                <% complain.product_complain.forEach(item => { %>
+                    <li>
+                        <p class="product-details"><strong>Product Name:</strong> <%= item.productName %></p>
+                        <p class="product-details"><strong>Sent Quantity:</strong> <%= item.send_quantity %></p>
+                        <p class="product-details"><strong>Received Quantity:</strong> <%= item.receive_quantity %></p>
+                        <p class="product-details"><strong>Complaint Category:</strong> <%= item.complain_category %></p>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for submitting your complaint. We are reviewing your case and will contact you soon.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -448,7 +448,7 @@ app.post('/receive-order/:id', async (req, res) => {
         const product = await ProductModel.findById(productId);
 
         if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(404).send("Product not found");
         }
 
         const complainData = {
@@ -456,23 +456,27 @@ app.post('/receive-order/:id', async (req, res) => {
             consumerId: product.consumerId,
             order_id: product._id,
             product_complain: product.productName.map(item => ({
-                productName: item.name,  // Store the product name directly
+                productName: item.name,
                 send_quantity: item.quantity,
-                receive_quantity: req.body[`receivedQuantity_${item._id}`] || item.quantity,
-                complain_category: req.body[`complainCategory_${item._id}`] || "Damaged Goods"
-            }))
+                receive_quantity: req.body[`receivedQuantity_${item.name}`] || item.quantity,
+                complain_category: req.body[`complainCategory_${item.name}`] || "Damaged Goods"
+            })),
+            complain_status: "Pending",
+            complain_date: new Date()
         };
 
         const newComplain = new Complain(complainData);
         await newComplain.save();
 
-        res.status(201).json({ message: "Complaint registered successfully", complain: newComplain });
+        // Render the complaint details page with the saved complaint data
+        res.render('complaintDetails', { complain: newComplain });
 
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({ message: "Server error", error: error.message });
+        res.status(500).send("Server error");
     }
 });
+
 
  
 
