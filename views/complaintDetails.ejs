@@ -116,6 +116,61 @@
             margin-right: 6px;
         }
 
+        /* Button styling */
+        .mt-8 {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .bg-blue-600 {
+            background-color: #2563eb;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .px-8 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .rounded-full {
+            border-radius: 9999px;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .hover\:bg-blue-700:hover {
+            background-color: #1d4ed8;
+        }
+
+        .focus\:ring-4:focus {
+            ring-width: 4px;
+        }
+
+        .focus\:ring-blue-300:focus {
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.5);
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .duration-300 {
+            transition-duration: 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -146,6 +201,13 @@
                 <% }); %>
             </ul>
         </div>
+
+        <div class="mt-8">
+            <a href="/profile" class="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300" style="text-decoration: none;">
+                Done
+            </a>
+        </div>
+        
 
         <div class="footer">
             <p>Thank you for submitting your complaint. We are reviewing your case and will contact you soon.</p>

@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 //const bcrypt = require('bcrypt');
+
 //Render and vercel
 const bcrypt = require('bcryptjs');
 
@@ -15,7 +16,7 @@ const app = express();
 const QRCode = require('qrcode'); 
 const Consumer=require('./models/consumer')
 const Complain = require('./models/complain'); 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; 
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -51,7 +52,7 @@ app.get("/loginPage", (req, res) => {
 app.get("/loginconsumer", (req, res) => {
     res.render('loginconsumer');
 });
-
+ 
 app.post("/createmanufacture", async (req, res) => {
     const { userID, email, password, gst, pincode, name, address, contact_number } = req.body;
 
@@ -476,9 +477,39 @@ app.post('/receive-order/:id', async (req, res) => {
         res.status(500).send("Server error");
     }
 });
+app.get("/complaints", isLoggedIn, async (req, res) => {
+    try {
+        const manufactureId = req.user.userID; // Assuming the userID is stored in the token
+        console.log("Manufacture ID:", manufactureId);
 
+        const complain = await Complain.find({ manufactureId });
+        if (!complain) {
+            return res.status(404).render('errorPage', { message: "No complaint found" });
+        }
 
+        console.log(complain)
+
+        // const complainData = {
+        //     manufactureId: complain.manufactureId,
+        //     _id: complain._id,
+        //     consumerId: complain.consumerId,
+        //     order_id: complain.order_id,
+        //     complain_status: complain.complain_status,
+        // };
+      
+        const wholeData = {
+           local: req.user,
+        }
  
+        // Pass complainData to the EJS template
+        res.render('complaints', { manufactureId , complain, wholeData });
+        
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).render('errorPage', { message: "Server error", error: error.message });
+    }
+});
+
 
 app.post('/createconsumer', async (req, res) => {
     try {

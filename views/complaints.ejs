@@ -50,10 +50,10 @@
             <!-- Profile Information Dropdown -->
             <div id="profileInfo" class="profile-info absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-4 hidden">
                 <div class="flex space-x-4 mt-2">
-                    <span class="font-semibold">Manufacture ID: <%= data.local.userID %></span>
+                    <span class="font-semibold">Manufacture ID: <%=manufactureId %></span>
                 </div>
                 <div class="flex space-x-4 mt-2">
-                    <span class="font-semibold">Email: <%= data.local.email %></span>
+                    <span class="font-semibold">Email: <%= wholeData.local.email %></span>
                 </div>
             </div>
         </div>
@@ -103,51 +103,31 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="ml-64 mt-24 p-6 flex-1">
-        <!-- Top right buttons -->
-        <div class="flex justify-end space-x-4 mb-6">
-            <button class="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
-                </svg>
-                Filter
-            </button>
-            <a href="/registerProductDetails"  class="flex items-center px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Register Product
+  <!-- Complaints Section (main content) -->
+<section id="complaints" class="p-6 bg-white rounded-lg shadow-lg fade-in">
+    <h2 class="text-2xl font-bold mb-4 flex justify-center">Complaints</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% for (const complaints of complain) { %>
+            <a href="/complaintdetails/<%= complain._id %>" class="block transform transition-transform duration-300 hover:scale-105">
+                <div class="border rounded-xl shadow-lg p-6 bg-white hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:border-blue-300 hover:shadow-xl transition hover:shadow-2xl flex flex-col items-start">
+                    <div class="flex items-center mb-4">
+                        <span class="p-2 bg-blue-500 text-white rounded-full shadow-md mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-3.866-3.582-7-8-7-1.191 0-2.3.305-3.263.83.211.209.263.517.142.785.278-.105.573-.201.88-.277A4.975 4.975 0 004 6c3.87 0 7 3.134 7 7h1zm6-6h6v6m-1-5v5h5m1 0a4.975 4.975 0 01-.883.277c-.376.092-.781.217-1.188.383-.603.241-1.13.553-1.597.926-.896.71-1.61 1.614-2.098 2.688C14.865 15.79 13.836 17.607 13 19H9c.836-1.393 1.865-3.21 3.26-4.608.735-.736 1.587-1.388 2.532-1.938.796-.46 1.612-.856 2.488-1.168A8.94 8.94 0 0121 12h1" />
+                            </svg>
+                        </span>
+                        <h3 class="text-gray-500 text-sm mb-2">Complaint ID: <%= complaints._id %></h3>
+                    </div>
+                    <hp class="text-xl font-semibold text-gray-700">Consumer ID: <%= complaints.consumerId %></p>
+                    <p class="text-gray-500 text-sm mb-2"> Order ID: <%= complaints.order_id %></p>
+                    <p class="text-gray-600 text-sm font-semibold">Status: <%=complaints.complain_status %></p>
+                </div>
             </a>
-        </div>
-        
+        <% } %>
+    </div>
+</section>
 
-        <!-- Orders Section (main content) -->
-        <section id="orders" class="p-6 bg-white rounded-lg shadow-lg fade-in">
-            <h2 class="text-2xl font-bold mb-4 flex justify-center">Orders</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <% for (const product of data.products) { %>
-                    <a href="/fullorderdetails/<%= product._id %>" class="block transform transition-transform duration-300 hover:scale-105">
-                        <div class="border rounded-xl shadow-lg p-6 bg-white hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:border-blue-300 hover:shadow-xl transition hover:shadow-2xl flex flex-col items-start <%= product.deliveryStatus === 'Delivered' ? 'status-delivered' : 
-                        product.deliveryStatus === 'Cancelled' ? 'status-cancelled' : 
-                        'status-processing' %>">
-                            <div class="flex items-center mb-4">
-                                <span class="p-2 bg-blue-500 text-white rounded-full shadow-md mr-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-3.866-3.582-7-8-7-1.191 0-2.3.305-3.263.83.211.209.263.517.142.785.278-.105.573-.201.88-.277A4.975 4.975 0 004 6c3.87 0 7 3.134 7 7h1zm6-6h6v6m-1-5v5h5m1 0a4.975 4.975 0 01-.883.277c-.376.092-.781.217-1.188.383-.603.241-1.13.553-1.597.926-.896.71-1.61 1.614-2.098 2.688C14.865 15.79 13.836 17.607 13 19H9c.836-1.393 1.865-3.21 3.26-4.608.735-.736 1.587-1.388 2.532-1.938.796-.46 1.612-.856 2.488-1.168A8.94 8.94 0 0121 12h1" />
-                                    </svg>
-                                </span>
-                                <h3 class="text-xl font-semibold text-gray-700">Consumer ID: <%= product.consumerId %></h3>
-                            </div>
-                            <p class="text-gray-500 text-sm mb-2">Order ID: <%= product._id %></p>
-                            <p class="text-gray-500 text-sm">Product Name: <%= product.productName.map(item => item.name).join(', ') %></p>
-                            <p class="text-gray-600 text-sm font-semibold">Delivery Status: <%= product.deliveryStatus %></p>
-                        </div>
-                    </a>
-                <% } %>
-            </div>
-        </section>
     </main>
-
     <!-- Script to Toggle Profile Information -->
     <script>
         const profileButton = document.getElementById("profileButton");
