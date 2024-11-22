@@ -63,7 +63,7 @@
     <aside class="bg-gradient-to-b from-blue-500 to-purple-600 text-white w-64 h-screen py-14 px-4 fixed left-0 top-10 pt-24 flex flex-col justify-between">
         <div>
             <ul class="space-y-4">
-                <li><a href="#home" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
+                <li><a href="/profile" class="block px-4 py-3 rounded transition-all transform hover:scale-105 hover:bg-blue-800">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 inline mr-2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                   </svg>
@@ -106,9 +106,9 @@
   <!-- Complaints Section (main content) -->
 <section id="complaints" class="p-6 bg-white rounded-lg shadow-lg fade-in">
     <h2 class="text-2xl font-bold mb-4 flex justify-center">Complaints</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ml-64 mt-14">
         <% for (const complaints of complain) { %>
-            <a href="/complaintdetails/<%= complain._id %>" class="block transform transition-transform duration-300 hover:scale-105">
+            <a href="/complaintdetails/<%= complaints._id %>" class="block transform transition-transform duration-300 hover:scale-105">
                 <div class="border rounded-xl shadow-lg p-6 bg-white hover:bg-gradient-to-r from-blue-50 to-purple-50 hover:border-blue-300 hover:shadow-xl transition hover:shadow-2xl flex flex-col items-start">
                     <div class="flex items-center mb-4">
                         <span class="p-2 bg-blue-500 text-white rounded-full shadow-md mr-4">
@@ -118,13 +118,14 @@
                         </span>
                         <h3 class="text-gray-500 text-sm mb-2">Complaint ID: <%= complaints._id %></h3>
                     </div>
-                    <hp class="text-xl font-semibold text-gray-700">Consumer ID: <%= complaints.consumerId %></p>
-                    <p class="text-gray-500 text-sm mb-2"> Order ID: <%= complaints.order_id %></p>
-                    <p class="text-gray-600 text-sm font-semibold">Status: <%=complaints.complain_status %></p>
+                    <h3 class="text-xl font-semibold text-gray-700">Consumer ID: <%= complaints.consumerId %></h3>
+                    <p class="text-gray-500 text-sm mb-2">Order ID: <%= complaints.order_id %></p>
+                    <p class="text-gray-600 text-sm font-semibold">Status: <%= complaints.complain_status %></p>
                 </div>
             </a>
         <% } %>
     </div>
+    
 </section>
 
     </main>

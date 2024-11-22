@@ -52,7 +52,12 @@ app.get("/loginPage", (req, res) => {
 app.get("/loginconsumer", (req, res) => {
     res.render('loginconsumer');
 });
- 
+app.get("/Recommendations" , isLoggedIn , (req , res) => {
+
+    res.redirect(`http://127.0.0.1:8050/${req.user.userID}`)
+
+
+})
 app.post("/createmanufacture", async (req, res) => {
     const { userID, email, password, gst, pincode, name, address, contact_number } = req.body;
 
