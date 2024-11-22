@@ -52,12 +52,20 @@ app.get("/loginPage", (req, res) => {
 app.get("/loginconsumer", (req, res) => {
     res.render('loginconsumer');
 });
-app.get("/Recommendations" , isLoggedIn , (req , res) => {
+app.get("/Recommendations", isLoggedIn, async (req, res) => {
+    try {
+        const user = await Consumer.findById(req.user.userID);
 
-    res.redirect(`http://127.0.0.1:8050/${req.user.userID}`)
+        if (!user || !user.hospital_name) {
+            return res.status(404).send("Hospital name not found.");
+        }
 
-
-})
+        res.redirect(`http://127.0.0.1:8050/${user.hospital_name}`);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).send("Internal server error.");
+    }
+});
 app.post("/createmanufacture", async (req, res) => {
     const { userID, email, password, gst, pincode, name, address, contact_number } = req.body;
 
