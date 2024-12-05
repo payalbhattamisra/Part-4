@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 //const bcrypt = require('bcrypt');
-
+const bodyParser = require('body-parser');
 //Render and vercel
 const bcrypt = require('bcryptjs');
 const xml2js = require('xml2js');
@@ -26,7 +26,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
-
+// Middleware to parse JSON requests
+app.use(bodyParser.json());
 
 
 app.get("/login", (req, res) => {
@@ -804,7 +805,7 @@ app.get('/fetchDataLDC', async (req, res) => {
     };
 
     try {
-        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMzMTU0MDgsImFwcHMiOiJkYXRhcHVzaCJ9.IExaWHV0otlwf6eTL-NPPz-MhpUC6eOKv3qQiET-W-FtIxav1fJrpyuR6mvNZtA_l7us4AWg1kWYikQk5JdkCA"
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzM0MDQ2MDgsImFwcHMiOiJkYXRhcHVzaCJ9.WE0QAhmqjkY2En6cJno1woPlQGJI5WfzEzqlX8Z6SS4lK3igA1hjttAeCBPbGNDzRuFaUja-ELD__cg3xbyXZg";
         const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -893,6 +894,67 @@ app.get('/fetchDataVAHAN', async (req, res) => {
 });console.log("Server running on port", PORT);
 
 
+
+// GET request handler
+app.get('/fci', async (req, res) => {
+    const fciUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/FCI/01';
+
+    try {
+        // Hardcoded Bearer token for staging
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzM0MDQ2MDgsImFwcHMiOiJkYXRhcHVzaCJ9.WE0QAhmqjkY2En6cJno1woPlQGJI5WfzEzqlX8Z6SS4lK3igA1hjttAeCBPbGNDzRuFaUja-ELD__cg3xbyXZg";
+
+        const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+
+        // Send GET request to the external API (staging)
+        const response = await axios.get(
+            fciUrl,
+            {
+                headers: headers,
+                params: req.query, // Forward query parameters from the incoming GET request
+            }
+        );
+
+        // Send back the API response
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error('Error occurred:', error.response?.data || error.message);
+        res.status(500).send('An error occurred while fetching FCI data.');
+    }
+});
+
+app.post('/fci', async (req, res) => {
+    const fciUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/FCI/01';
+
+    try {
+        // Hardcoded Bearer token for staging
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzM0MDQ2MDgsImFwcHMiOiJkYXRhcHVzaCJ9.WE0QAhmqjkY2En6cJno1woPlQGJI5WfzEzqlX8Z6SS4lK3igA1hjttAeCBPbGNDzRuFaUja-ELD__cg3xbyXZg";
+
+        const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+
+        // Send POST request to the external API (staging)
+        const response = await axios.post(
+            fciUrl,
+            {},  // Empty body as per the curl request '--data-raw "{}"'
+            {
+                headers: headers,
+            }
+        );
+
+        // Send back the API response
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error('Error occurred:', error.response?.data || error.message);
+        res.status(500).send('An error occurred while fetching FCI data.');
+    }
+});
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
