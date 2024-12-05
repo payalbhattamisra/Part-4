@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css" />
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-6 shadow-lg">
+        <h1 class="text-center text-3xl font-extrabold tracking-wide">
+            <span class="block">📦 Logistics Dashboard</span>
+        </h1>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card: Container Number -->
+            <div class="bg-white shadow-md rounded-xl p-6 transform hover:scale-105 transition-transform duration-300">
+                <h2 class="text-gray-700 font-bold mb-2">Container Number</h2>
+                <p class="text-blue-600 text-2xl font-semibold"><%= eximContainerTrail.cntrDetail.cntrno %></p>
+            </div>
+
+            <!-- Card: Container Size -->
+            <div class="bg-white shadow-md rounded-xl p-6 transform hover:scale-105 transition-transform duration-300">
+                <h2 class="text-gray-700 font-bold mb-2">Container Size</h2>
+                <p class="text-blue-600 text-2xl font-semibold"><%= eximContainerTrail.cntrDetail.cntrsize %> ft</p>
+            </div>
+
+            <!-- Card: Refrigerated -->
+            <div class="bg-white shadow-md rounded-xl p-6 transform hover:scale-105 transition-transform duration-300">
+                <h2 class="text-gray-700 font-bold mb-2">Refrigerated</h2>
+                <p class="text-blue-600 text-2xl font-semibold">
+                    <%= eximContainerTrail.cntrDetail.refflg === 'Yes' ? 'Yes' : 'No' %>
+                </p>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white shadow-md rounded-xl p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b-2 pb-2">Event Timeline</h2>
+            <ul class="space-y-4">
+                <% eximContainerTrail.trackLog.forEach(event => { %>
+                    <li class="p-4 border rounded-lg hover:bg-gray-100">
+                        <strong class="text-blue-700">Event:</strong> <%= event.eventname %> <br />
+                        <strong class="text-blue-700">Location:</strong> <%= event.currentlocation %> <br />
+                        <strong class="text-blue-700">Time:</strong> <%= new Date(event.timeinms).toLocaleString() %>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+
+        <!-- Map View -->
+        <div class="bg-white shadow-md rounded-xl p-6 mt-8">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b-2 pb-2">Map View</h2>
+            <div id="map" class="w-full h-96 rounded-xl"></div>
+        </div>
+
+        <!-- Table View -->
+        <div class="bg-white shadow-md rounded-xl p-6 mt-8 overflow-x-auto">
+            <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b-2 pb-2">Detailed Log</h2>
+            <table class="w-full table-auto text-left border-collapse">
+                <thead>
+                    <tr class="bg-blue-500 text-white">
+                        <th class="py-3 px-4 border">Event</th>
+                        <th class="py-3 px-4 border">Location</th>
+                        <th class="py-3 px-4 border">Transport Mode</th>
+                        <th class="py-3 px-4 border">Empty?</th>
+                        <th class="py-3 px-4 border">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% eximContainerTrail.trackLog.forEach(event => { %>
+                        <tr class="hover:bg-gray-100">
+                            <td class="py-3 px-4 border"><%= event.eventname %></td>
+                            <td class="py-3 px-4 border"><%= event.currentlocation %></td>
+                            <td class="py-3 px-4 border"><%= event.transportmode %></td>
+                            <td class="py-3 px-4 border"><%= event.isempty === 'Y' ? 'Yes' : 'No' %></td>
+                            <td class="py-3 px-4 border"><%= new Date(event.timeinms).toLocaleString() %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // Initialize Map
+        const map = L.map('map').setView([18.950149, 72.95123], 10);
+
+        // Add Map Layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add Container Markers
+        <% eximContainerTrail.trackLog.forEach(event => { %>
+            L.marker([<%= event.latitude %>, <%= event.longitude %>])
+                .addTo(map)
+                .bindPopup(`
+                    <strong>Event:</strong> <%= event.eventname %> <br />
+                    <strong>Location:</strong> <%= event.currentlocation %> <br />
+                    <strong>Time:</strong> <%= new Date(event.timeinms).toLocaleString() %>
+                `);
+        <% }) %>;
+    </script>
+
+</body>
+</html>

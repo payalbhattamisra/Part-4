@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@codedipper/random-code": "^3.1.0",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
@@ -20,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
     "nodemailer": "^6.9.15",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "xml2js": "^0.6.2"
   }
 }

@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 
 //Render and vercel
 const bcrypt = require('bcryptjs');
+const xml2js = require('xml2js');
 
 const jwt = require('jsonwebtoken');
 const userModel = require('./models/userD');
@@ -17,10 +18,9 @@ const QRCode = require('qrcode');
 const Consumer=require('./models/consumer')
 const Complain = require('./models/complain'); 
 const PORT = process.env.PORT || 3000; 
-
+const axios = require('axios');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -677,6 +677,221 @@ function isLoggedInconsumer(req, res, next) {
 // });
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
+//  app.get('/fetchDataLDC', async (req, res) => {
+//     const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/LDB/01';
+  
+//     const headers = {
+//       'Content-Type': 'application/json',
+//       'Accept': 'application/json',
+//     };
+  
+//     const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMzMTU0MDgsImFwcHMiOiJkYXRhcHVzaCJ9.IExaWHV0otlwf6eTL-NPPz-MhpUC6eOKv3qQiET-W-FtIxav1fJrpyuR6mvNZtA_l7us4AWg1kWYikQk5JdkCA';
+//     const requestBody = {
+//       containerNumber: 'NSST1234570',
+//     };
+  
+//     const fetchDataHeaders = {
+//       ...headers,
+//       Authorization: `Bearer ${token}`,
+//     };
+  
+//     try {
+//       // Fetch data from the external API
+//       const dataResponse = await axios.post(fetchDataUrl, requestBody, { headers: fetchDataHeaders });
+  
+//       // Check if the response contains the required data
+//       if (
+//         dataResponse.data &&
+//         dataResponse.data.response &&
+//         dataResponse.data.response[0] &&
+//         dataResponse.data.response[0].response
+//       ) {
+//         const eximContainerTrail = dataResponse.data.response[0].response.eximContainerTrail;
+//       console.log(eximContainerTrail);
+//         // Render the EJS template with the API response data
+//         res.render('dashboard', { eximContainerTrail });
+//       } else {
+//         res.status(404).send('No data found in the API response.');
+//       }
+//     } catch (error) {
+//       console.error('Error occurred:', error.response?.data || error.message);
+//       res.status(500).send('An error occurred while fetching data.');
+//     }
+//   });
+app.get('/ULIP', async (req, res) => {
+  
+      const url = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/user/login';
+  
+      const data = {
+          username: 'geetsahu_usr',
+          password: 'geetsahu@25112024',
+      };
+  
+      const headers = {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+      };
+  
+      try {
+          const response = await axios.post(url, data, { headers });
+          console.log('Response data:', response.data);
+      } catch (error) {
+          console.error('Error occurred:', error.response?.data || error.message);
+      }
+  }); 
+
+
+
+app.get('/ulip-data', async (req, res) => {
+    try {
+        // Hardcoded container number
+        const containerNumber = 'NSST1234570';
+
+        const ulipResponse = await axios.post(
+            'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/LDB/01',
+            { containerNumber },
+            {
+                headers: {
+                    Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMyMzQwOTAsImFwcHMiOiJkYXRhcHVzaCJ9.AoIOZcJfoh5PmhDKw7nz8bIDBTxamXHhvPrdhUzl4B6iPAGPKz1H6BaWt-S2W_CgbSQtj_AcdWm55WHjkeV7Rg',
+                    Accept: 'application/json',
+                },
+            }
+        );
+
+        // Send back the response from ULIP API
+        res.status(200).json(ulipResponse.data);
+    } catch (error) {
+        console.error('Error while calling ULIP API:', error.message);
+        res.status(500).json({ error: 'Failed to fetch data from ULIP API', details: error.message });
+    }
+});
+
+let cachedToken = null;
+let tokenExpiry = null;
+
+// Function to fetch token and manage caching
+const getToken = async () => {
+    if (cachedToken && tokenExpiry && Date.now() < tokenExpiry) {
+        return cachedToken; // Return cached token if valid
+    }
+
+    const url = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/user/login';
+    const data = {
+        username: 'geetsahu_usr',
+        password: 'geetsahu@25112024',
+    };
+    const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+    };
+
+    try {
+        const response = await axios.post(url, data, { headers });
+        cachedToken = response.data?.token; // Extract token from response
+        tokenExpiry = Date.now() + 3600 * 1000; // Assuming token expires in 1 hour
+        return cachedToken;
+    } catch (error) {
+        console.error('Error fetching token:', error.response?.data || error.message);
+        throw new Error('Failed to fetch token');
+    }
+};
+
+// Endpoint to fetch LDC data
+app.get('/fetchDataLDC', async (req, res) => {
+    const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/LDB/01';
+    const requestBody = {
+        containerNumber: 'NSST1234570', // Use container number from the example
+    };
+
+    try {
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMzMTU0MDgsImFwcHMiOiJkYXRhcHVzaCJ9.IExaWHV0otlwf6eTL-NPPz-MhpUC6eOKv3qQiET-W-FtIxav1fJrpyuR6mvNZtA_l7us4AWg1kWYikQk5JdkCA"
+        const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+
+        const response = await axios.post(fetchDataUrl, requestBody, { headers });
+
+        const eximContainerTrail = response.data?.response?.[0]?.response?.eximContainerTrail;
+
+        if (eximContainerTrail) {
+            res.status(200).json({ eximContainerTrail });
+        } else {
+            res.status(404).send('No data found in the API response.');
+        }
+    } catch (error) {
+        console.error('Error occurred:', error.response?.data || error.message);
+        res.status(500).send('An error occurred while fetching LDC data.');
+    }
+});
+
+// app.get('/fetchDataVAHAN', async (req, res) => {
+//     const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/VAHAN/01';
+//     const requestBody = {
+//         vehiclenumber: 'UP91L0001',
+//     };
+
+//     try {
+//         const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMzMTU0MDgsImFwcHMiOiJkYXRhcHVzaCJ9.IExaWHV0otlwf6eTL-NPPz-MhpUC6eOKv3qQiET-W-FtIxav1fJrpyuR6mvNZtA_l7us4AWg1kWYikQk5JdkCA"
+//         const headers = {
+//             'Content-Type': 'application/json',
+//             Accept: 'application/json',
+//             Authorization: `Bearer ${token}`,
+//         };
+
+//         const response = await axios.post(fetchDataUrl, requestBody, { headers });
+//         const vahanData = response.data;
+
+//         if (vahanData) {
+//             res.status(200).json(vahanData);
+//         } else {
+//             res.status(404).send('No data found in the API response.');
+//         }
+//     } catch (error) {
+//         console.error('Error occurred:', error.response?.data || error.message);
+//         res.status(500).send('An error occurred while fetching VAHAN data.');
+//     }
+// });
+
+app.get('/fetchDataVAHAN', async (req, res) => {
+    const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/VAHAN/01';
+    const requestBody = {
+        vehiclenumber: 'UP91L0001',
+    };
+
+    try {
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzMzMTU0MDgsImFwcHMiOiJkYXRhcHVzaCJ9.IExaWHV0otlwf6eTL-NPPz-MhpUC6eOKv3qQiET-W-FtIxav1fJrpyuR6mvNZtA_l7us4AWg1kWYikQk5JdkCA";
+        const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+
+        const response = await axios.post(fetchDataUrl, requestBody, { headers });
+        const vahanData = response.data;
+
+        if (vahanData && vahanData.response && vahanData.response[0]) {
+            const xmlData = vahanData.response[0].response;
+
+            // Parse XML to JSON
+            xml2js.parseString(xmlData, { explicitArray: false }, (err, jsonData) => {
+                if (err) {
+                    console.error('Error parsing XML:', err.message);
+                    res.status(500).send('Failed to parse XML response.');
+                } else {
+                    res.status(200).json(jsonData);
+                }
+            });
+        } else {
+            res.status(404).send('No data found in the API response.');
+        }
+    } catch (error) {
+        console.error('Error occurred:', error.response?.data || error.message);
+        res.status(500).send('An error occurred while fetching VAHAN data.');
+    }
+});console.log("Server running on port", PORT);
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
