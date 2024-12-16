@@ -29,6 +29,8 @@ app.use(cookieParser());
 // Middleware to parse JSON requests
 app.use(bodyParser.json());
 
+let FToken = ""
+
 
 app.get("/login", (req, res) => {
     res.render('login');
@@ -734,8 +736,10 @@ app.get('/ULIP', async (req, res) => {
       };
   
       try {
-          const response = await axios.post(url, data, { headers });
-          console.log('Response data:', response.data);
+          const Response = await axios.post(url, data, { headers });
+          console.log('Response data:', Response.data);
+          FToken = `${Response.data.response.id}`
+          console.log(`Updated Token : ${FToken}`)
       } catch (error) {
           console.error('Error occurred:', error.response?.data || error.message);
       }
@@ -805,7 +809,7 @@ app.get('/fetchDataLDC', async (req, res) => {
     };
 
     try {
-        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzM0MDQ2MDgsImFwcHMiOiJkYXRhcHVzaCJ9.WE0QAhmqjkY2En6cJno1woPlQGJI5WfzEzqlX8Z6SS4lK3igA1hjttAeCBPbGNDzRuFaUja-ELD__cg3xbyXZg";
+        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzQzMzQ1NTQsImFwcHMiOiJkYXRhcHVzaCJ9.8CbttzC1io62SWGHyQIWh2SLhgtU4_4IYs4CaAmrJneZ2KmlvNx86zdwXFIQwX9Ujd-1O_5Q-h_8PE_be58lKQ";
         const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -827,6 +831,48 @@ app.get('/fetchDataLDC', async (req, res) => {
     }
 });
 
+app.get('/fetchDataLDCDash', async (req, res) => {
+    const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/LDB/01';
+  
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+  
+    const token = FToken
+  
+    const requestBody = {
+      containerNumber: 'NSST1234570',
+    };
+  
+    const fetchDataHeaders = {
+      ...headers,
+      Authorization: `Bearer ${token}`,
+    };
+  
+    try {
+      // Fetch data from the external API
+      const dataResponse = await axios.post(fetchDataUrl, requestBody, { headers: fetchDataHeaders });
+  
+      // Check if the response contains the required data
+      if (
+        dataResponse.data &&
+        dataResponse.data.response &&
+        dataResponse.data.response[0] &&
+        dataResponse.data.response[0].response
+      ) {
+        const eximContainerTrail = dataResponse.data.response[0].response.eximContainerTrail;
+  
+        // Render the EJS template with the API response data
+        res.render('dashboard', { eximContainerTrail });
+      } else {
+        res.status(404).send('No data found in the API response.');
+      }
+    } catch (error) {
+      console.error('Error occurred:', error.response?.data || error.message);
+      res.status(500).send('An error occurred while fetching data.');
+    }
+  });
 // app.get('/fetchDataVAHAN', async (req, res) => {
 //     const fetchDataUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/VAHAN/01';
 //     const requestBody = {
@@ -931,7 +977,7 @@ app.post('/fci', async (req, res) => {
 
     try {
         // Hardcoded Bearer token for staging
-        const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnZWV0c2FodV91c3IiLCJpYXQiOjE3MzM0MDQ2MDgsImFwcHMiOiJkYXRhcHVzaCJ9.WE0QAhmqjkY2En6cJno1woPlQGJI5WfzEzqlX8Z6SS4lK3igA1hjttAeCBPbGNDzRuFaUja-ELD__cg3xbyXZg";
+        const token = `${FToken}`
 
         const headers = {
             'Content-Type': 'application/json',
@@ -955,6 +1001,52 @@ app.post('/fci', async (req, res) => {
         res.status(500).send('An error occurred while fetching FCI data.');
     }
 });
+
+
+app.post('/Finalfci', async (req, res) => {
+    const fciUrl = 'https://www.ulipstaging.dpiit.gov.in/ulip/v1.0.0/FCI/01';
+
+    try {
+        // Hardcoded Bearer token for staging
+        const token = FToken
+
+        const headers = {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+
+        // Send POST request to the external API (staging)
+        const response = await axios.post(
+            fciUrl,
+            {}, // Empty body as per the curl request '--data-raw "{}"'
+            { headers }
+        );
+
+        // Return the response from the FCI API
+        return res.json(response.data);
+    } catch (error) {
+        console.error('Error occurred:', error.response?.data || error.message);
+        return res.status(500).json({ error: 'An error occurred while fetching FCI data.' });
+    }
+});
+
+// Endpoint to handle /track GET request
+app.get('/track', async (req, res) => {
+    try {
+        // Replace this with your actual POST request to fetch data
+        const response = await axios.post('http://localhost:3000/fci', {});
+        
+        // Render the EJS template with the fetched data
+        res.render('tracking', { data: response.data });
+    } catch (error) {
+        console.error('Error fetching tracking data:', error.message);
+        
+        // Render the template with an error message
+        res.render('tracking', { data: { error: 'Failed to fetch tracking data.' } });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

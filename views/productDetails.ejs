@@ -39,26 +39,43 @@
                         <span class="text-gray-600"><strong>Name:</strong> <%= item.name %></span><br>
                         <span class="text-gray-500"><strong>Quantity:</strong> <%= item.quantity %></span>, 
                         <span class="text-gray-500"><strong>Price:</strong> $<%= item.price %></span>
+                        <span class="text-gray-500"><strong>Expiry Date:</strong>6/1/25</span>
                     </li>
                 <% }); %>
             </ul>
         </div>
 
-        <div class="flex justify-between mt-8">
-            <a href="" class="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition">
+        <div class="flex items-center justify-between mt-8 space-x-4">
+            <a href="" class="text-xs items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 <span>View QR Code</span>
             </a>
-            <a href="https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=77208173350" class="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition">
+            <!-- <a href="https://www.bluedart.com/web/guest/trackdartresult?trackFor=0&trackNo=77208173350" class="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h3M5 10v6M9 16h3m-1-6v6m3 6h3m-1-6v6m4-12h3m-1 6h3" />
                 </svg>
                 <span>Track</span>
-            </a>
+            </a> -->
+            <button 
+            onclick="window.open(window.location.origin + '/track', '_blank')" 
+            class=" text-xs px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition ease-in-out duration-200"
+        >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h3M5 10v6M9 16h3m-1-6v6m3 6h3m-1-6v6m4-12h3m-1 6h3" />
+        </svg>
+        <span>Track</span>
+    </button>
+            <button 
+            onclick="window.open(window.location.origin + '/fetchDataLDCDash', '_blank')" 
+            class=" text-xs px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition ease-in-out duration-200"
+        >
+            Container Details and Tracking
+        </button>
+        
         </div>
-
+        
         <a href="/" class="block mt-8 text-center bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7m8 14l-7-7 7-7" />
